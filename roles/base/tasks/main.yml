@@ -15,6 +15,7 @@
       - tzdata
       - iotop
       - iftop
+      - fonts-firacode
     state: present
     update_cache: true
 
@@ -34,12 +35,12 @@
 
 - name: Set vscode keybinds
   copy:
-    src: roles/base/files/keybindings.json
+    src: roles/base/files/vscode/keybindings.json
     dest: "{{ ansible_env.HOME }}/.config/Code/User/keybindings.json"
 
 - name: Set vscode settings
   copy:
-    src: roles/base/files/settings.json
+    src: roles/base/files/vscode/settings.json
     dest: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
 
 - name: Install vscode extensions

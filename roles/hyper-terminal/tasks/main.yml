@@ -31,3 +31,7 @@
       state: absent
   when: hyper_installed_version != hyper_version
 
+- name: Set hyper preferences
+  copy:
+    src: roles/hyper-terminal/files/.hyper.js
+    dest: "{{ ansible_env.HOME }}/.hyper.js"
