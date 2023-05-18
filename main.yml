@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  roles:
+    - name: base
+    - name: nvm
+    - name: hyper-terminal
+    - name: extras
+    # - name: wordpress

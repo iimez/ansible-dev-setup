@@ -1,0 +1,5 @@
+---
+hyper_arch: "amd64"
+hyper_version: "3.4.1"
+hyper_deb_file: "hyper_{{ hyper_version }}_{{ hyper_arch }}.deb"
+hyper_deb_url: "https://github.com/vercel/hyper/releases/download/v{{ hyper_version }}/{{ hyper_deb_file }}"

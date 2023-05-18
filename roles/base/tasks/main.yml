@@ -1,0 +1,48 @@
+---
+- name: Install packages
+  become: true
+  apt:
+    name:
+      - git
+      - ca-certificates
+      - apt-transport-https
+      - rsync
+      - curl
+      - wget
+      - nano
+      - htop
+      - ncdu
+      - tzdata
+      - iotop
+      - iftop
+    state: present
+    update_cache: true
+
+- name: Install sublime-text snap
+  become: true
+  snap:
+    name: sublime-text
+    classic: true
+
+- name: Install other snaps
+  become: true
+  snap:
+    name:
+      - code
+      - keepassxc
+      - chromium
+
+- name: Set vscode keybinds
+  copy:
+    src: roles/base/files/keybindings.json
+    dest: "{{ ansible_env.HOME }}/.config/Code/User/keybindings.json"
+
+- name: Set vscode settings
+  copy:
+    src: roles/base/files/settings.json
+    dest: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+
+- name: Install vscode extensions
+  shell: code --install-extension esbenp.prettier-vscode monokai.theme-monokai-pro-vscode
+  changed_when: false
+

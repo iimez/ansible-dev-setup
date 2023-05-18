@@ -1,0 +1,7 @@
+---
+- name: Install extra snaps
+  become: true
+  snap:
+    name:
+      - nextcloud-desktop-client
+      - spotify
