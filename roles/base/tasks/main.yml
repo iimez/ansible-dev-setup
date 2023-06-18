@@ -16,6 +16,7 @@
       - iotop
       - iftop
       - fonts-firacode
+      - net-tools
     state: present
     update_cache: true
 
@@ -32,6 +33,7 @@
       - code
       - keepassxc
       - chromium
+      - flameshot
 
 - name: Set vscode keybinds
   copy:
@@ -44,6 +46,6 @@
     dest: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
 
 - name: Install vscode extensions
-  shell: code --install-extension esbenp.prettier-vscode monokai.theme-monokai-pro-vscode
+  shell: code --install-extension esbenp.prettier-vscode ms-azuretools.vscode-docker eamodio.gitlens cweijan.vscode-mysql-client2 ctcuff.font-preview tomsaunders.vscode-workspace-explorer GitHub.copilot
   changed_when: false
 
