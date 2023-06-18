@@ -1,5 +1,124 @@
 ---
 
-# - name: Install vscode extensions
-#   shell: code --install-extension bmewburn.vscode-intelephense-client
-#   changed_when: false
+- name: Install packages
+  become: true
+  apt:
+    name:
+      - nginx
+      - mariadb-server
+      - mariadb-client
+      - php8.1-fpm
+      - php8.1-curl
+      - php8.1-gd
+      - php8.1-intl
+      - php8.1-mbstring
+      - php8.1-mysql
+      - php8.1-xml
+      - php8.1-zip
+      - php8.1-imagick
+      - php8.1-memcached
+      - php8.1-redis
+    state: present
+    update_cache: true
+
+- name: Set default php version explicitly to 8.1 (to avoid surprises when upgrading)
+  become: true
+  alternatives:
+    name: php
+    path: /usr/bin/php8.1
+    priority: 100 # default php is 81 (for 8.1)
+
+- name: Start php8.1-fpm service
+  become: true
+  service:
+    name: php8.1-fpm
+    state: started
+    enabled: true
+
+- name: Install wp-cli {{ wp_cli_version }}
+  become: true
+  get_url:
+    url: 'https://github.com/wp-cli/wp-cli/releases/download/v{{ wp_cli_version }}/wp-cli-{{ wp_cli_version }}.phar'
+    dest: /usr/local/bin/wp
+    mode: 0775
+    force: true
+
+- name: Create install dir
+  become: true
+  file:
+    path: /var/www/wp
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0775
+
+- name: Download wordpress
+  become: true
+  become_user: www-data
+  command: >
+    wp core download
+    --no-color
+    --locale=de_DE
+  args:
+    chdir: /var/www/wp
+    creates: /var/www/wp/index.php
+  register: downloaded_wp_files
+
+- name: Make sure pymysql is present
+  become: true
+  pip:
+    name: pymysql
+    state: present
+
+- name: Create database
+  become: true
+  mysql_db:
+    name: wordpress
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create database user
+  become: true
+  mysql_user:
+    name: '{{ wp_database_user }}'
+    password: '{{ wp_database_password }}'
+    priv: 'wordpress.*:ALL'
+    host: localhost
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create wordpress configuration
+  become: true
+  become_user: www-data
+  command: >
+    wp config create
+    --no-color
+    --dbname=wordpress
+    --dbuser={{ wp_database_user }}
+    --dbpass='{{ wp_database_password }}'
+    --locale={{ locale | default('de_DE')}}
+  args:
+    chdir: /var/www/wp
+    creates: /var/www/wp/wp-config.php
+
+- name: Install wordpress multisite
+  become: true
+  become_user: www-data
+  no_log: true
+  command: >
+    wp core multisite-install
+    --no-color
+    --url="wordpress.local"
+    --title="Wordpress Local"
+    --admin_user="{{ wp_admin_user | default('admin') }} }}"
+    --admin_password="{{ wp_admin_password | default('password') }}"
+    --admin_email="limez@protonmail.com"
+    --skip-email
+  args:
+    chdir: /var/www/wp
+
+- name: Create vhost
+  template:
+    src: vhost/http.conf.j2
+    dest: '/etc/nginx/sites-available/wordpress.conf'
+  notify: reload nginx

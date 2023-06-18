@@ -1,0 +1,14 @@
+---
+
+- name: reload php-fpm8.1
+  service:
+    name: php8.1-fpm
+    state: reloaded
+    enabled: true
+  listen: reload php-fpm
+
+- name: reload nginx
+  service:
+    name: nginx
+    state: reloaded
+    enabled: true

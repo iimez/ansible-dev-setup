@@ -5,4 +5,4 @@
     - name: nvm
     - name: hyper-terminal
     - name: extras
-    # - name: wordpress
+    - name: wordpress
