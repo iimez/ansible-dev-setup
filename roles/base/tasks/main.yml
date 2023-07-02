@@ -5,6 +5,7 @@
     name:
       - git
       - ca-certificates
+      - gnupg
       - apt-transport-https
       - rsync
       - curl

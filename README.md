@@ -1,6 +1,6 @@
 #### Personal Ansible Playbook
 
-For quickly setting up development environment on a fresh Ubuntu 22 minimal install.
+For quickly setting up local development environment on a fresh Ubuntu 22 minimal install.
 
 ```
 sudo apt-get install python3 ansible git
