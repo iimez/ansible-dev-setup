@@ -23,5 +23,9 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
+      - uidmap
     state: present
     update_cache: true
+
+- name: Run dockerd-rootless-setuptool.sh install
+  command: /usr/bin/dockerd-rootless-setuptool.sh install
